@@ -24,6 +24,6 @@ setup(name='Signle Shot MultiBox Detector-SSD Fascade Parsing',
           'pandas',
           'itertools',
           'glob',
-          'math,
+          'math'
           
       ])
