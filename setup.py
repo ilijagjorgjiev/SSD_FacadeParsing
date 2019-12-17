@@ -1,29 +1,20 @@
 #!/usr/bin/env python
-
-from distutils.core import setup
-
-setup(name='Signle Shot MultiBox Detector-SSD Fascade Parsing',
-      version='1.0',
-      description='Signle Shot MultiBox Detector Project',
-      author='Gjorgjiev Ilija',
-      author_email='ilija.gjorgjiev@epfl.ch',
-      url='github.com/ilijagjorgjiev',
-      packages=['ssd_project'],
-      requires=[
-          'tqdm',
-          'torch',
-          'cv2',
-          'PIL',
-          'numpy',
-          'argparse',
-          'matplotlib',
-          'torchvision',
-          'imageio',
-          'os',
-          'scipy',
-          'pandas',
-          'itertools',
-          'glob',
-          'math'
-          
-      ])
+import setuptools
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+    
+setuptools.setup(
+     name='ssd_project',  
+     version='1.0' ,
+     author="Ilija Gjorgjiev",
+     author_email="ilija.gjorgjiev@epfl.ch",
+     description="Single Shot MultiBox Detector - SSD",
+     long_description=long_description,
+   long_description_content_type="text/markdown",
+     url="https://github.com/ilijagjorgjiev/SSD_FascadeParsing",
+     packages=setuptools.find_packages(),
+     classifiers=[
+         "Programming Language :: Python :: 3",
+         "License :: OSI Approved :: MIT License",
+     ],
+ )
