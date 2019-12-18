@@ -37,8 +37,6 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
-        self.batch_losses.append(val)
-        self.batch_avg_losses.append(self.avg)
 
 def train(train_loader, model, loss_function, optimizer, epoch):
     """

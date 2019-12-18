@@ -17,7 +17,7 @@ import torchvision.transforms.functional as FT
 import cv2
 from ssd_project.utils.global_variables import *
 
-def detect_objects(predicted_locs, predicted_scores, min_score, max_overlap, top_k, priors_cxcy):
+def detect_objects(predicted_locs, predicted_scores, min_score=0.2, max_overlap=0.5, top_k=100, priors_cxcy):
     """
     Decode the 8732 loc and conf scores outputed by the SSD300 network.
     Args:
@@ -36,7 +36,7 @@ def detect_objects(predicted_locs, predicted_scores, min_score, max_overlap, top
     num_classes = predicted_scores.size(2)
 
     imgs_bboxes, imgs_labels, imgs_scores = [], [], []
-
+    
     assert num_priors == predicted_locs.size(1) == predicted_scores.size(1)
 
     for i in range(batch_size):
@@ -80,12 +80,12 @@ def detect_objects(predicted_locs, predicted_scores, min_score, max_overlap, top
         labels = torch.cat(labels, dim=0)  # (n_objects)
         scores = torch.cat(scores, dim=0)  # (n_objects)
         n_objects = scores.size(0)
-
+        print("HERE")
         # Keep only the top k objects
         if n_objects > top_k:
             scores, sort_ind = scores.sort(dim=0, descending=True)
             scores = scores[:top_k]  # (top_k)
-            boxes = boxes[sort_ind][:top_k]  # (top_k, 4)
+            bboxes = bboxes[sort_ind][:top_k]  # (top_k, 4)
             labels = labels[sort_ind][:top_k]  # (top_k)
 
         # Append to lists that store predicted boxes and scores for all images
@@ -213,7 +213,7 @@ def predict_objects(model, path_img, min_score = 0.2, max_overlap = 0.2, top_k =
 
     return original_image, det_boxes, det_labels, np.around(det_scores.detach().numpy(),decimals=1)
 
-def draw_detected_objects(path_img, det_boxes, det_labels, det_scores):
+def draw_detected_objects(path_img, det_boxes, det_labels, det_scores, draw_scores = False):
 
     """
     Draw detected objects in the image.
@@ -244,19 +244,22 @@ def draw_detected_objects(path_img, det_boxes, det_labels, det_scores):
         if(det_labels[i] == "door"):
             color = (230, 25, 75)
             cv2.rectangle(org_img, top_left, bottom_right, color, 2)
-            cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            if(draw_scores):
+                cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         #Draw a building
         elif(det_labels[i] == "building"):
             color = (255, 255, 0)
             cv2.rectangle(org_img, top_left, bottom_right, color, 2)
-            cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            if(draw_scores):
+                cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         #Draw a window
         else:
             color = (60, 180, 75)
             cv2.rectangle(org_img, top_left, bottom_right, color, 2)
-            cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            if(draw_scores):
+                cv2.putText(org_img, str(det_scores[i]), (box[0], box[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
     #Return Annotated Image
     return org_img

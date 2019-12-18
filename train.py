@@ -13,8 +13,8 @@ def main(args):
     best_loss = BEST_LOSS
     assert args.epochs > 0
     assert args.batch_size == 8
-    torch.manual_seed(32)
-    np.random.seed(32)
+    torch.manual_seed(66)
+    np.random.seed(66)
     start_epoch = START_EPOCH
     
     if(args.pretrained_model is not None):
@@ -31,10 +31,6 @@ def main(args):
         v_loss_normal, v_loss_avg = best_model["validation_losses_batch_values"], best_model["validation_losses_batch_avgs"]
         
         print("Model LOADED SUCCESSFULLY")
-        print("t_loss_normal:", t_loss_normal)
-        print("v_loss_normal:", v_loss_normal)
-        print("t_loss_avg:", t_loss_avg)
-        print("v_loss_avg:", v_loss_avg)
 
     else:
         v_loss_avg, v_loss_normal = [], []
