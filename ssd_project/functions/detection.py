@@ -17,7 +17,7 @@ import torchvision.transforms.functional as FT
 import cv2
 from ssd_project.utils.global_variables import *
 
-def detect_objects(predicted_locs, predicted_scores, min_score=0.2, max_overlap=0.5, top_k=100, priors_cxcy):
+def detect_objects(predicted_locs, predicted_scores, priors_cxcy, min_score=0.2, max_overlap=0.5, top_k=100):
     """
     Decode the 8732 loc and conf scores outputed by the SSD300 network.
     Args:
@@ -80,7 +80,7 @@ def detect_objects(predicted_locs, predicted_scores, min_score=0.2, max_overlap=
         labels = torch.cat(labels, dim=0)  # (n_objects)
         scores = torch.cat(scores, dim=0)  # (n_objects)
         n_objects = scores.size(0)
-        print("HERE")
+    
         # Keep only the top k objects
         if n_objects > top_k:
             scores, sort_ind = scores.sort(dim=0, descending=True)
@@ -192,8 +192,8 @@ def predict_objects(model, path_img, min_score = 0.2, max_overlap = 0.2, top_k =
     predicted_locs, predicted_scores = model(img.unsqueeze(0))
 
     # get best objects and suppress redudant objects
-    det_boxes, det_labels, det_scores = detect_objects(predicted_locs, predicted_scores, min_score,
-                                                                   max_overlap, top_k, model.priors_cxcy)
+    det_boxes, det_labels, det_scores = detect_objects(predicted_locs, predicted_scores, model.priors_cxcy, min_score,
+                                                                   max_overlap, top_k)
     # Move detections to the CPU
     det_boxes = det_boxes[0].to('cpu')
     det_scores = det_scores[0].to("cpu")
