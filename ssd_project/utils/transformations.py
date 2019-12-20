@@ -253,7 +253,7 @@ def resize(image, boxes, dims=(300, 300)):
 
     return new_image, new_boxes
 
-def apply_augmentations(img, bboxes, labels, split="TRAIN"):
+def apply_augmentations(img, bboxes, labels, split="TRAIN", augment = False):
 
     #ImageNET
     assert split in {'TRAIN', 'TEST'}
@@ -265,7 +265,7 @@ def apply_augmentations(img, bboxes, labels, split="TRAIN"):
 
 
     #Apply Augmentations only on Training-Set
-    if split == 'TRAIN':
+    if split == 'TRAIN' and augment == True:
 
         #Photometric distortions
         img = photometric_distort(img)
