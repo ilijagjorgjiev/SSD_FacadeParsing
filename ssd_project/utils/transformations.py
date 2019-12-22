@@ -253,7 +253,7 @@ def resize(image, boxes, dims=(300, 300)):
 
     return new_image, new_boxes
 
-def apply_augmentations(img, bboxes, labels, split="TRAIN", augment = False):
+def apply_augmentations(img, bboxes, labels, split="TRAIN", augment = True):
 
     #ImageNET
     assert split in {'TRAIN', 'TEST'}
