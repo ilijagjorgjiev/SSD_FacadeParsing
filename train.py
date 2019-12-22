@@ -16,12 +16,11 @@ def main(args):
     torch.manual_seed(66)
     np.random.seed(66)
     start_epoch = START_EPOCH
-    
+
     if(args.pretrained_model is not None):
         print("LOADED MODEL")
         best_model = torch.load(args.pretrained_model)
         model_state_dict =  best_model["model_state_dict"]
-        optimizer = best_model["optimizer"]
         start_epoch = best_model["epoch"]
         best_loss = best_model["loss"]
         epochs_since_improvement = best_model["epochs_since_improvement"]
@@ -29,7 +28,7 @@ def main(args):
         model.load_state_dict(model_state_dict)
         t_loss_normal, t_loss_avg = best_model["training_losses_batch_values"], best_model["training_losses_batch_avgs"]
         v_loss_normal, v_loss_avg = best_model["validation_losses_batch_values"], best_model["validation_losses_batch_avgs"]
-        
+
         print("Model LOADED SUCCESSFULLY")
 
     else:
@@ -47,18 +46,18 @@ def main(args):
         biases = []
         not_biases = []
 
-        #Initialize and SGD optimizer, with 2 times bigger learning rate
-        #Done in original CAFFE REPO - https://github.com/weiliu89/caffe/tree/ssd
-        for param_name, param in model.named_parameters():
-            if param.requires_grad:
-                if param_name.endswith('.bias'):
-                    biases.append(param)
-                else:
-                    not_biases.append(param)
+    #Initialize and SGD optimizer, with 2 times bigger learning rate
+    #Done in original CAFFE REPO - https://github.com/weiliu89/caffe/tree/ssd
+    for param_name, param in model.named_parameters():
+        if param.requires_grad:
+            if param_name.endswith('.bias'):
+                biases.append(param)
+            else:
+                not_biases.append(param)
 
-        optimizer = torch.optim.SGD(params=[{'params': biases, 'lr': 2 * args.lr}, {'params': not_biases}],
-                                lr=args.lr, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
-    
+    optimizer = torch.optim.SGD(params=[{'params': biases, 'lr': 2 * args.lr}, {'params': not_biases}],
+                            lr=args.lr, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+
     #Create Custom Datasets with applied transformations for both training and validation
     train_dataset = TrainDataset(args.path_imgs, args.path_bboxes, args.path_labels, "TRAIN", args.split_ratio)
     val_dataset = TrainDataset(args.path_imgs, args.path_bboxes, args.path_labels, "TEST", args.split_ratio)
@@ -73,7 +72,7 @@ def main(args):
                                           num_workers = WORKERS, pin_memory = True)
     model = model.to(device)
     loss_function = MultiBoxLoss(model.priors_cxcy).to(device)
-    
+
     for epoch in range(start_epoch, args.epochs):
 
         train_losses = train(train_loader=train_loader,
@@ -81,17 +80,17 @@ def main(args):
               loss_function=loss_function,
               optimizer=optimizer,
               epoch=epoch)
-        
+
         val_losses = validate(val_loader = val_loader,
                           model = model,
                           loss_function = loss_function)
-        
+
         v_loss_avg.append(val_losses.avg)
         t_loss_avg.append(train_losses.avg)
-        
+
         v_loss_normal.append(val_losses.val)
         t_loss_normal.append(train_losses.val)
-        
+
         is_best = val_losses.avg < best_loss
         best_loss = min(val_losses.avg, best_loss)
 
@@ -101,10 +100,10 @@ def main(args):
 
         else:
             epochs_since_improvement = 0
-            save_best_trained(epoch, epochs_since_improvement, model, optimizer, best_loss, 
+            save_best_trained(epoch, epochs_since_improvement, model, optimizer, best_loss,
                               (t_loss_normal, t_loss_avg), (v_loss_normal, v_loss_avg))
 
-    return model, optimizer, best_loss, training_losses, val_losses, epochs_since_improvement, args.epochs
+    return model, optimizer, best_loss, epochs_since_improvement, args.epochs
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train an SSD model')
