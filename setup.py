@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     
 setuptools.setup(
      name='ssd_project',  
-     version='1.0' ,
+     version='0.1' ,
      author="Ilija Gjorgjiev",
      author_email="ilija.gjorgjiev@epfl.ch",
      description="Single Shot MultiBox Detector - SSD",

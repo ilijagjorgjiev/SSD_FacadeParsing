@@ -10,7 +10,7 @@ Find more details about the project in the [report.pdf](report.pdf).
 ## Install
 To install the `ssd_project` library and use it within your python environment:
 ```
-pip install ssd-project==1.0
+pip install ssd-project==0.1
 ```
 
 
