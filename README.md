@@ -8,11 +8,10 @@ Find more details about the project in the [report.pdf](report.pdf).
 
 
 ## Install
-To install the `facade_project` library and use it within your python environment:
+To install the `ssd_project` library and use it within your python environment:
 ```
-pip install -e .
+pip install ssd-project==1.0
 ```
-where `.` is the root directory of this git repository, containing the installer (`setup.py` file).
 
 
 ## Examples on how to use 
